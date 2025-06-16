@@ -16,10 +16,11 @@ class TaskManager {
         this.setupEventListeners();
         this.renderTasks();
         this.renderHistory();
+        this.renderCopyright();
         this.checkOverdueTasks();
         this.loadSettings();
-        this.renderCopyright();
-        this.getPluginInfo();
+
+
         
         // Verificar tarefas vencidas a cada minuto
         setInterval(() => this.checkOverdueTasks(), 60000);
@@ -632,8 +633,8 @@ Relatório gerado automaticamente pelo Gerenciador de Acompanhamentos
             author: chrome?.runtime?.getManifest?.()?.author,
             license: "MIT",
             version: chrome?.runtime?.getManifest?.()?.version || "1.0.0",
-            repository: "your github",
-            contact: "your email",
+            repository: "https://github.com/samirsaravia/follow-through",
+            contact: "samirsaraviacastro@gmail.com",
             description: chrome?.runtime?.getManifest?.()?.description || "Plugin com ferramentas úteis",
             name: chrome?.runtime?.getManifest?.()?.name,
         };
@@ -664,7 +665,7 @@ Relatório gerado automaticamente pelo Gerenciador de Acompanhamentos
                 <div class="copyright-details" id="copyright-details" style="display: none;">
                     <h4>Informações Legais</h4>
                     <div class="legal-info">
-                        <p><strong>Plugin:</strong> ${copyrightInfo.name``}</p>
+                        <p><strong>Plugin:</strong> ${copyrightInfo.name}</p>
                         <p><strong>Desenvolvedor:</strong> ${copyrightInfo.author}</p>
                         <p><strong>Data de Criação:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
                         <p><strong>Licença:</strong> ${copyrightInfo.license}</p>
@@ -908,16 +909,6 @@ Relatório gerado automaticamente pelo Gerenciador de Acompanhamentos
                 console.log('Link externo clicado:', link.href);
             });
         });
-    }
-
-    // Método para obter informações do plugin dinamicamente
-    getPluginInfo() {
-        return {
-            name: chrome?.runtime?.getManifest?.()?.name || "Handful",
-            version: chrome?.runtime?.getManifest?.()?.version || "1.0.0",
-            author: chrome?.runtime?.getManifest?.()?.author || "Desenvolvedor",
-            description: chrome?.runtime?.getManifest?.()?.description || "Plugin com ferramentas úteis"
-        };
     }
 
 }
