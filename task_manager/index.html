@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Acompanhamentos</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> Gerenciador </h1>
+            <div class="quote-futuristic">
+                <blockquote>
+                  “O futuro pertence àqueles que acreditam na beleza dos seus sonhos.”
+                  <span class="author">— Deportada</span>
+                </blockquote>
+              </div>
+            <div class="nav-buttons">
+                <button id="showTasks" class="nav-btn active">Acompanhamentos</button>
+                <button id="showHistory" class="nav-btn">Histórico</button>
+                <button id="showSettings" class="nav-btn">Configurações</button>
+            </div>
+            <div class="backup-container">
+                <button id="backupWebhook">🔄 My Backup</button>
+            </div>
+        </header>
+
+        <!-- Seção de Tarefas Ativas -->
+        <div id="tasksSection" class="section active">
+            <!-- Barra de Progresso -->
+            <!-- <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-title">Progresso das Tarefas</span>
+                    <span class="progress-percentage" id="progressPercentage">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+            </div> -->
+
+            <div class="add-task-form">
+                <h3>Adicionar Novo Acompanhamento</h3>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="taskTitle">Título:</label>
+                        <input type="text" id="taskTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Descrição:</label>
+                        <textarea id="taskDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDeadline">Prazo:</label>
+                        <div class="deadline-options">
+                            <button type="button" class="deadline-btn" data-days="1">Hoje</button>
+                            <button type="button" class="deadline-btn" data-days="2">Amanhã</button>
+                            <button type="button" class="deadline-btn" data-days="7">1 Semana</button>
+                            <button type="button" class="deadline-btn" data-days="30">1 Mês</button>
+                        </div>
+                        <input type="datetime-local" id="taskDeadline" required>
+                    </div>
+                    <button type="submit">Adicionar Acompanhamento</button>
+                </form>
+            </div>
+
+            <div class="tasks-list">
+                <h3>Tarefas</h3>
+                <div class="filters">
+                    <select id="statusFilter">
+                        <option value="all">Todas</option>
+                        <option value="andamento">Em Andamento</option>
+                        <option value="atrasada">Atrasada</option>
+                    </select>
+                    <button id="generateReport">Gerar Relatório</button>
+                </div>
+                <div class="table-container">
+                    <table id="tasksTable">
+                        <thead>
+                            <tr>
+                                <th class="t-header">ID</th>
+                                <th>Título</th>
+                                <th>Descrição</th>
+                                <th>Prazo</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Seção de Histórico -->
+        <div id="historySection" class="section">
+            <div class="history-header">
+                <h3>Histórico de Acompanhamentos Concluídos</h3>
+                <button id="clearHistory">Limpar Histórico</button>
+            </div>
+            <div class="table-container">
+                <table id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Descrição</th>
+                            <th>Prazo Original</th>
+                            <th>Data Conclusão</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Seção de Configurações -->
+        <div id="settingsSection" class="section">
+            <h3>Configurações</h3>
+            <div class="settings-form">
+                <div class="form-group">
+                    <label for="emailNotifications">
+                        <input type="checkbox" id="emailNotifications">
+                        Ativar notificações por email
+                    </label>
+                </div>
+                <div class="form-group" id="emailGroup" style="display: none;">
+                    <label for="userEmail">Seu email:</label>
+                    <input type="email" id="userEmail" placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="reminderTime">Lembrete antes do prazo (horas):</label>
+                    <select id="reminderTime">
+                        <option value="1">1 hora</option>
+                        <option value="6">6 horas</option>
+                        <option value="24" selected>24 horas</option>
+                        <option value="48">48 horas</option>
+                    </select>
+                </div>
+                <button id="saveSettings">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+   
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Editar Tarefa</h3>
+            <form id="editForm">
+                <input type="hidden" id="editTaskId">
+                <div class="form-group">
+                    <label for="editTitle">Título:</label>
+                    <input type="text" id="editTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">Descrição:</label>
+                    <textarea id="editDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editDeadline">Prazo:</label>
+                    <input type="datetime-local" id="editDeadline" required>
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">Status:</label>
+                    <select id="editStatus">
+                        <option value="em-andamento">Em Andamento</option>
+                        <option value="atrasada">Atrasada</option>
+                        <option value="encerrado">Encerrado</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit">Salvar</button>
+                    <button type="button" id="cancelEdit">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Modal de Concluir Tarefa -->
+    <div id="completeModal" class="modal">
+        <div class="modal-content">
+        <span class="close" id="closeCompleteModal">&times;</span>
+        <h3>Concluir Acompanhamento</h3>
+        <form id="completeForm">
+            <input type="hidden" id="completeTaskId">
+            <div class="form-group">
+            <label for="completionNotes">Como você realizou essa tarefa?</label>
+            <textarea id="completionNotes" rows="4" required placeholder="Descreva os passos, desafios ou observações..."></textarea>
+            </div>
+            <div class="modal-buttons">
+            <button type="submit">Concluir</button>
+            <button type="button" id="cancelComplete">Cancelar</button>
+            </div>
+        </form>
+        </div>
+    </div>
+
+    <!-- copywrite -->
+    <!-- <div class="copyright">
+        © 2025 SAMIR S. Todos os direitos reservados.
+      </div> -->
+    <footer>
+        © Todos os direitos reservados
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>

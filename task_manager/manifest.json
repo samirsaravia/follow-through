@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Acompanhamento",
+  "version": "1.0",
+  "description": "Sistema completo de gerenciamento de tarefas com alertas e histórico",
+  "author": "Samir Saravia Castro",
+  "icons": {
+    "48": "icon48.png"
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Gerenciador de Tarefas"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "host_permissions": [
+    "your trigger webhook"
+]
+}
