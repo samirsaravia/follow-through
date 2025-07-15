@@ -388,7 +388,7 @@ class TaskManager {
 
     formatReportForEmail(report) {
         return `
-RELATÓRIO DE ACOMPANHAMENTOS - ${report.generatedAt}
+<b>RELATÓRIO DE ACOMPANHAMENTOS - ${report.generatedAt}</b>
 ================================================
 
 RESUMO:
@@ -399,7 +399,8 @@ RESUMO:
 
 ACOMPANHAMENTOS ATIVOS:
 ${report.tasks.map(task => `
-- [${task.id}] ${task.title}
+----------------------------------------
+- <b>[${task.id}] ${task.title}</b>
   Descrição: ${task.description}
   Prazo: ${this.formatDate(task.deadline)}
   Status: ${this.getStatusText(task.status)}
@@ -407,7 +408,8 @@ ${report.tasks.map(task => `
 
 HISTÓRICO DE ACOMPANHAMENTOS CONCLUÍDOS:
 ${report.history.map(task => `
-- [${task.id}] ${task.title}
+----------------------------------------
+- <b>[${task.id}] ${task.title}</b>
   Descrição: ${task.description}
   Observações:${task.completionNotes}
   Prazo Original: ${this.formatDate(task.deadline)}
