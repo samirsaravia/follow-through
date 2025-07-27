@@ -60,16 +60,26 @@
                         </div>
                         <input type="datetime-local" id="taskDeadline" required>
                     </div>
+
+                    <input type="hidden" id="taskCategory" name="taskCategory" />
+                    <div class="form-group">
+                        <label for="taskCategory">Categoria:</label>
+                        <div class="category-option">
+                            <button type="button" class="category-btn">Visita</button>
+                            <button type="button" class="category-btn">Financeiro</button>
+                            <button type="button" class="category-btn">Outro</button>
+                        </div>
+                    </div>
                     <button type="submit">Adicionar Acompanhamento</button>
                 </form>
             </div>
-
+            <!-- Filtro -->
             <div class="tasks-list">
                 <h3>Tarefas</h3>
                 <div class="filters">
                     <select id="statusFilter">
                         <option value="all">Todas</option>
-                        <option value="andamento">Em Andamento</option>
+                        <option value="andamento">Andamento</option>
                         <option value="atrasada">Atrasada</option>
                     </select>
                     <button id="generateReport">Gerar Relatório</button>
@@ -166,18 +176,33 @@
                     <label for="editDeadline">Prazo:</label>
                     <input type="datetime-local" id="editDeadline" required>
                 </div>
+                <!-- status -->
                 <div class="form-group">
                     <label for="editStatus">Status:</label>
                     <select id="editStatus">
-                        <option value="em-andamento">Em Andamento</option>
+                        <option value="andamento">Andamento</option>
                         <option value="atrasada">Atrasada</option>
                         <option value="encerrado">Encerrado</option>
                     </select>
+                </div>
+                <!-- categoria -->
+                <div class="form-group">
+                    <input type="hidden" id="editCategory" />
+
+                    <div class="form-group">
+                        <label for="editCategory">Categoria:</label>
+                        <div class="category-option" id="editCategoryButtons">
+                            <button type="button" class="category-btn">Visita</button>
+                            <button type="button" class="category-btn">Financeiro</button>
+                            <button type="button" class="category-btn">Outro</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-buttons">
                     <button type="submit">Salvar</button>
                     <button type="button" id="cancelEdit">Cancelar</button>
                 </div>
+                
             </form>
         </div>
     </div>
@@ -204,10 +229,9 @@
     <!-- <div class="copyright">
         © 2025 SAMIR S. Todos os direitos reservados.
       </div> -->
-    <footer>
-        © Todos os direitos reservados
-    </footer>
 
+    <footer>Direitos reservados</footer>
+  
     <script src="index.js"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@ class TaskManager {
     constructor() {
         this.tasks = [];
         this.history = [];
-        this.webhookUrl = 'your webhook'
+        this.webhookUrl = ''
         this.settings = {
             emailNotifications: false,
             userEmail: '',
@@ -116,6 +116,30 @@ class TaskManager {
         // Outros botões
         document.getElementById('generateReport').addEventListener('click', () => this.generateReport());
         document.getElementById('clearHistory').addEventListener('click', () => this.clearHistory());
+        
+        // Categoria - botão
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remover classe ativa de todos
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                
+                // Adicionar classe ativa ao clicado
+                btn.classList.add('active');
+
+                // Definir valor no input oculto
+                document.getElementById('taskCategory').value = btn.textContent;
+            });
+        });
+
+        // Categoria no formulário de edição
+        const editCategoryButtons = document.querySelectorAll('#editCategoryButtons .category-btn');
+        editCategoryButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                editCategoryButtons.forEach(b => b.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                document.getElementById('editCategory').value = e.currentTarget.textContent;
+            });
+        });
 
         // Fechar modal clicando fora
         window.addEventListener('click', (e) => {
@@ -172,6 +196,7 @@ class TaskManager {
             description: document.getElementById('taskDescription').value,
             deadline: new Date(document.getElementById('taskDeadline').value),
             status: 'andamento',
+            category: document.getElementById('taskCategory').value,
             createdAt: new Date()
         };
 
@@ -200,7 +225,8 @@ class TaskManager {
                 title: document.getElementById('editTitle').value,
                 description: document.getElementById('editDescription').value,
                 deadline: new Date(document.getElementById('editDeadline').value),
-                status: document.getElementById('editStatus').value
+                status: document.getElementById('editStatus').value,
+                category: document.getElementById('editCategory').value
             };
 
             // Se mudou para encerrado, mover para histórico
@@ -225,6 +251,15 @@ class TaskManager {
         document.getElementById('editDescription').value = task.description;
         document.getElementById('editDeadline').value = this.formatDateTimeLocal(new Date(task.deadline));
         document.getElementById('editStatus').value = task.status;
+        const category = task.category || '';
+        document.getElementById('editCategory').value = category;
+        document.querySelectorAll('#editCategoryButtons .category-btn').forEach(btn => {
+            if (btn.textContent === category) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
 
         document.getElementById('editModal').style.display = 'block';
     }
@@ -290,46 +325,67 @@ class TaskManager {
             filteredTasks = this.tasks.filter(task => task.status === filter);
         }
     
-        filteredTasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+        // Agrupar por categoria
+        const groupedByCategory = {};
+        filteredTasks.forEach(task => {
+            const category = task.category || 'Sem Categoria';
+            if (!groupedByCategory[category]) {
+                groupedByCategory[category] = [];
+            }
+            groupedByCategory[category].push(task);
+        });
     
         tbody.innerHTML = '';
     
-        filteredTasks.forEach(task => {
-            const row = document.createElement('tr');
-    
-            row.innerHTML = `
-                <td class='t-header'>${task.id}</td>
-                <td>${task.title}</td>
-                <td>${task.description}</td>
-                <td>${this.formatDate(task.deadline)}</td>
-                <td><span class="status ${task.status}">${this.getStatusText(task.status)}</span></td>
+        Object.keys(groupedByCategory).forEach(category => {
+            // Cabeçalho da categoria
+            const categoryRow = document.createElement('tr');
+            categoryRow.innerHTML = `
+                <td colspan="6" style="background-color: #eee; font-weight: bold; text-align: center;">
+                     ${category.toUpperCase()}
+                </td>
             `;
+            tbody.appendChild(categoryRow);
     
-            const actionsTd = document.createElement('td');
-            actionsTd.classList.add('action-buttons');
+            // Tarefas da categoria
+            groupedByCategory[category]
+                .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+                .forEach(task => {
+                    const row = document.createElement('tr');
     
-            // Edit Button
-            const editButton = document.createElement('button');
-            editButton.className = 'action-btn edit-btn';
-            editButton.textContent = 'Editar';
-            editButton.addEventListener('click', () => this.editTask(task.id));
-            // Complete Button
-            const completeButton = document.createElement('button');
-            completeButton.className = 'action-btn complete-btn';
-            completeButton.textContent = 'Concluir';
-            completeButton.addEventListener('click', () => this.showCompleteModal(task.id));
-            // Delete Button
-            const deleteButton = document.createElement('button');
-            deleteButton.className = 'action-btn delete-btn';
-            deleteButton.textContent = 'Excluir';
-            deleteButton.addEventListener('click', () => this.deleteTask(task.id));
+                    row.innerHTML = `
+                        <td class='t-header'>${task.id}</td>
+                        <td>${task.title}</td>
+                        <td>${task.description}</td>
+                        <td>${this.formatDate(task.deadline)}</td>
+                        <td><span class="status ${task.status}">${this.getStatusText(task.status)}</span></td>
+                    `;
     
-            actionsTd.appendChild(editButton);
-            actionsTd.appendChild(completeButton);
-            actionsTd.appendChild(deleteButton);
+                    const actionsTd = document.createElement('td');
+                    actionsTd.classList.add('action-buttons');
     
-            row.appendChild(actionsTd);
-            tbody.appendChild(row);
+                    const editButton = document.createElement('button');
+                    editButton.className = 'action-btn edit-btn';
+                    editButton.textContent = 'Editar';
+                    editButton.addEventListener('click', () => this.editTask(task.id));
+    
+                    const completeButton = document.createElement('button');
+                    completeButton.className = 'action-btn complete-btn';
+                    completeButton.textContent = 'Concluir';
+                    completeButton.addEventListener('click', () => this.showCompleteModal(task.id));
+    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'action-btn delete-btn';
+                    deleteButton.textContent = 'Excluir';
+                    deleteButton.addEventListener('click', () => this.deleteTask(task.id));
+    
+                    actionsTd.appendChild(editButton);
+                    actionsTd.appendChild(completeButton);
+                    actionsTd.appendChild(deleteButton);
+    
+                    row.appendChild(actionsTd);
+                    tbody.appendChild(row);
+                });
         });
     }
     
@@ -339,30 +395,76 @@ class TaskManager {
         // Ordenar por data de conclusão (mais recente primeiro)
         const sortedHistory = this.history.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
 
+        // Agrupar tarefas por mês
+        const tasksByMonth = this.groupTasksByMonth(sortedHistory);
+
         tbody.innerHTML = '';
-        sortedHistory.forEach(task => {
-            const row = document.createElement('tr');
-
-            row.innerHTML = `
-                <td>${task.id}</td>
-                <td>${task.title}</td>
-                <td>${task.description}<br>>>>><<<<<br>Obs:${task.completionNotes || 'Sem detalhes'}</td>
-                <td>${this.formatDate(task.deadline)}</td>
-                <td>${this.formatDate(task.completedAt)}</td>
+        
+        // Renderizar cada grupo de mês
+        Object.keys(tasksByMonth).forEach(monthKey => {
+            // Criar linha de cabeçalho do mês
+            const monthHeaderRow = document.createElement('tr');
+            monthHeaderRow.classList.add('month-header');
+            monthHeaderRow.innerHTML = `
+                <td colspan="6" style="background-color: #f0f0f0; font-weight: bold; text-align: center; padding: 10px;">
+                    ${this.formatMonthHeader(monthKey)}
+                </td>
             `;
+            tbody.appendChild(monthHeaderRow);
 
-            const actionsTd = document.createElement('td');
-            actionsTd.classList.add('action-buttons');
+            // Renderizar tarefas do mês
+            tasksByMonth[monthKey].forEach(task => {
+                const row = document.createElement('tr');
 
-            const deleteButton = document.createElement('button');
-            deleteButton.className = 'action-btn delete-btn';
-            deleteButton.textContent = 'Excluir';
-            deleteButton.addEventListener('click', () => this.deleteTask(task.id, true));
+                row.innerHTML = `
+                    <td>${task.id}</td>
+                    <td>${task.title}</td>
+                    <td>${task.description}<br>>>>><<<<<br>Obs:${task.completionNotes || 'Sem detalhes'}</td>
+                    <td>${this.formatDate(task.deadline)}</td>
+                    <td>${this.formatDate(task.completedAt)}</td>
+                `;
 
-            actionsTd.appendChild(deleteButton);
-            row.appendChild(actionsTd);
-            tbody.appendChild(row);
+                const actionsTd = document.createElement('td');
+                actionsTd.classList.add('action-buttons');
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'action-btn delete-btn';
+                deleteButton.textContent = 'Excluir';
+                deleteButton.addEventListener('click', () => this.deleteTask(task.id, true));
+
+                actionsTd.appendChild(deleteButton);
+                row.appendChild(actionsTd);
+                tbody.appendChild(row);
+            });
         });
+    }
+
+    // Função auxiliar para agrupar tarefas por mês
+    groupTasksByMonth(tasks) {
+        const grouped = {};
+        
+        tasks.forEach(task => {
+            const date = new Date(task.completedAt);
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            
+            if (!grouped[monthKey]) {
+                grouped[monthKey] = [];
+            }
+            grouped[monthKey].push(task);
+        });
+        
+        return grouped;
+    }
+
+    // Função auxiliar para formatar o cabeçalho do mês
+    formatMonthHeader(monthKey) {
+        const [year, month] = monthKey.split('-');
+        const monthNames = [
+            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        ];
+        
+        return `${monthNames[parseInt(month) - 1]} de ${year}`;
     }
 
     generateReport() {
@@ -388,7 +490,7 @@ class TaskManager {
 
     formatReportForEmail(report) {
         return `
-<b>RELATÓRIO DE ACOMPANHAMENTOS - ${report.generatedAt}</b>
+RELATÓRIO DE ACOMPANHAMENTOS - ${report.generatedAt}
 ================================================
 
 RESUMO:
@@ -399,21 +501,23 @@ RESUMO:
 
 ACOMPANHAMENTOS ATIVOS:
 ${report.tasks.map(task => `
-----------------------------------------
-- <b>[${task.id}] ${task.title}</b>
+-------------------------------------------
+- [${task.id}] ${task.title}
   Descrição: ${task.description}
   Prazo: ${this.formatDate(task.deadline)}
   Status: ${this.getStatusText(task.status)}
+
 `).join('')}
 
 HISTÓRICO DE ACOMPANHAMENTOS CONCLUÍDOS:
 ${report.history.map(task => `
-----------------------------------------
-- <b>[${task.id}] ${task.title}</b>
+---------------------------------------
+- [${task.id}] ${task.title}
   Descrição: ${task.description}
   Observações:${task.completionNotes}
   Prazo Original: ${this.formatDate(task.deadline)}
   Concluído em: ${this.formatDate(task.completedAt)}
+
 `).join('')}
 
 ================================================
@@ -632,11 +736,11 @@ Relatório gerado automaticamente pelo Gerenciador de Acompanhamentos
         const currentYear = new Date().getFullYear();
         const copyrightInfo = {
             year: currentYear,
-            author: chrome?.runtime?.getManifest?.()?.author,
+            author: chrome?.runtime?.getManifest?.()?.author||"Samir S.",
             license: "MIT",
             version: chrome?.runtime?.getManifest?.()?.version || "1.0.0",
             repository: "https://github.com/samirsaravia/follow-through",
-            contact: "samirsaraviacastro@gmail.com",
+            contact: "samir.saravia.10@gmail.com",
             description: chrome?.runtime?.getManifest?.()?.description || "Plugin com ferramentas úteis",
             name: chrome?.runtime?.getManifest?.()?.name,
         };
@@ -912,6 +1016,16 @@ Relatório gerado automaticamente pelo Gerenciador de Acompanhamentos
             });
         });
     }
+
+    // // Método para obter informações do plugin dinamicamente
+    // getPluginInfo() {
+    //     return {
+    //         name: chrome?.runtime?.getManifest?.()?.name || "Handful",
+    //         version: chrome?.runtime?.getManifest?.()?.version || "1.0.0",
+    //         author: chrome?.runtime?.getManifest?.()?.author || "Desenvolvedor",
+    //         description: chrome?.runtime?.getManifest?.()?.description || "Plugin com ferramentas úteis"
+    //     };
+    // }
 
 }
 
