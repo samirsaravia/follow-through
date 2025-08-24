@@ -16,10 +16,12 @@
                   <span class="author">— Deportada</span>
                 </blockquote>
               </div>
-            <div class="nav-buttons">
-                <button id="showTasks" class="nav-btn active">Acompanhamentos</button>
-                <button id="showHistory" class="nav-btn">Histórico</button>
-                <button id="showSettings" class="nav-btn">Configurações</button>
+            <div class="nav-buttons grid-container-main">
+                <button id="showTasks" class="gridBtn nav-btn active btn1">Acompanhamentos</button>
+                <button id="showHistory" class="gridBtn nav-btn btn2">Histórico</button>
+                <button id="showSettings" class="gridBtn nav-btn btn3">Configurações</button>
+                <button id="showTools" class="gridBtn nav-btn btn4">Tools</button>
+
             </div>
             <div class="backup-container">
                 <button id="backupWebhook">🔄 My Backup</button>
@@ -153,6 +155,46 @@
                 </div>
                 <button id="saveSettings">Salvar Configurações</button>
             </div>
+        </div>
+
+       <!-- Tool Section -->
+        <div id="toolSection" class="section">
+            
+                <div class="tools-header">
+                    <h3>Ferramentas</h3>
+                    <div class="nav-buttons">
+                        <button id="showTexto" type="button" class="tool-btn nav-Sbtn" data-tab="text">Texto</button>
+                        <button id="showTest" type="button" class="tool-btn nav-Sbtn active" data-tab="ai">Teste</button>
+                    </div>
+                </div>
+                <!-- tab transforma texto -->
+                <div id="textTransf" class="subsection">
+
+                        <h4>Formatação</h4>
+                        <div class="input-group form-group">
+                            <label for="textInput">Texto Original</label>
+                            <textarea id="textInput" placeholder="Digite o texto..." rows="3" required></textarea>
+                        </div>
+                        <div class="button-group grid-container-tool1">
+                            <button type="button" id="uppercaseBtn" class="btn-primary btn-transform">MAISCULA</button>
+                            <button type="button" id="lowercaseBtn" class="btn-secondary btn-transform">minuscula</button>
+                            <button type="button" id="capitalizeBtn" class="btn-secondary btn-transform">Capitalizada</button>
+                        </div>
+                        <div class="input-group">
+                            <label for="textOutput">Resultado</label>
+                            <textarea id="textOutput" readonly></textarea>
+                            <button id="copyTextBtn" type="button" class="btn copy">Copiar</button>
+                        </div>
+
+
+                </div>
+
+                <!-- another  -->
+                 <div id="another" class="subsection">
+                    <p>hello</p>
+                 </div>
+                
+           
         </div>
     </div>
    

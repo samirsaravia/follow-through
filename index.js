@@ -2,7 +2,7 @@ class TaskManager {
     constructor() {
         this.tasks = [];
         this.history = [];
-        this.webhookUrl = ''
+        this.webhookUrl = '';
         this.settings = {
             emailNotifications: false,
             userEmail: '',
@@ -19,7 +19,8 @@ class TaskManager {
         this.renderCopyright();
         this.checkOverdueTasks();
         this.loadSettings();
-
+        this.transformText();
+        
 
         
         // Verificar tarefas vencidas a cada minuto
@@ -52,6 +53,35 @@ class TaskManager {
             this.showNotification('Erro ao enviar backup para o webhook!', 'error');
         }
     }
+
+    // Copiar texto para clipboard
+    async copyToClipboard(text, button) {
+        try {
+            await navigator.clipboard.writeText(text);
+            const originalText = button.textContent;
+            button.textContent = '✓ Copiado!';
+            button.style.background = 'linear-gradient(135deg, #48bb78, #38a169)';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = '';
+            }, 2000);
+        } catch (err) {
+            // Fallback para navegadores mais antigos
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            button.textContent = '✓ Copiado!';
+            setTimeout(() => {
+                button.textContent = 'Copiar';
+            }, 2000);
+        }
+    }
+
     showCompleteModal(taskId) {
         document.getElementById('completeTaskId').value = taskId;
         document.getElementById('completionNotes').value = '';
@@ -90,6 +120,9 @@ class TaskManager {
         document.getElementById('showTasks').addEventListener('click', () => this.showSection('tasksSection'));
         document.getElementById('showHistory').addEventListener('click', () => this.showSection('historySection'));
         document.getElementById('showSettings').addEventListener('click', () => this.showSection('settingsSection'));
+        document.getElementById('showTools').addEventListener('click', () => this.showSection('toolSection'));
+        document.getElementById('showTexto').addEventListener('click', ()=>this.showSubsection('textTransf'));
+        document.getElementById('showTest').addEventListener('click', ()=>this.showSubsection('another'));
 
         // Formulário de tarefas
         document.getElementById('taskForm').addEventListener('submit', (e) => this.handleTaskSubmit(e));
@@ -116,7 +149,7 @@ class TaskManager {
         // Outros botões
         document.getElementById('generateReport').addEventListener('click', () => this.generateReport());
         document.getElementById('clearHistory').addEventListener('click', () => this.clearHistory());
-        
+
         // Categoria - botão
         document.querySelectorAll('.category-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -130,6 +163,7 @@ class TaskManager {
                 document.getElementById('taskCategory').value = btn.textContent;
             });
         });
+
 
         // Categoria no formulário de edição
         const editCategoryButtons = document.querySelectorAll('#editCategoryButtons .category-btn');
@@ -172,8 +206,80 @@ class TaskManager {
         if (sectionId === 'tasksSection') document.getElementById('showTasks').classList.add('active');
         if (sectionId === 'historySection') document.getElementById('showHistory').classList.add('active');
         if (sectionId === 'settingsSection') document.getElementById('showSettings').classList.add('active');
+        if (sectionId === 'toolSection') document.getElementById('showTools').classList.add('active');
     }
 
+    showSubsection(sectionId){
+        // remove classe active de todas as subseções
+        document.querySelectorAll('.subsection').forEach(subsection=>{
+            subsection.classList.remove('active');
+        });
+        document.querySelectorAll('.nav-Sbtn').forEach(btn=>{
+            btn.classList.remove('active');
+        });
+
+        // ativar subseção atual
+        document.getElementById(sectionId).classList.add('active');
+
+        // ativar botão correspondente
+        if (sectionId === 'textTransf') document.getElementById('showTexto').classList.add("active");
+        if (sectionId === 'another') document.getElementById('showTest').classList.add("active");
+    }
+
+    transformText(){
+
+        function clearActive () {
+            document.querySelectorAll('.btn-transform').forEach(btn=>{
+                btn.classList.remove('active');
+            })
+        }
+        
+
+        const textInput = document.getElementById('textInput');
+        const uppercaseBtn = document.getElementById('uppercaseBtn');
+        const lowercaseBtn =  document.getElementById('lowercaseBtn');
+        const capitalizeBtn = document.getElementById('capitalizeBtn');
+        const textOutput = document.getElementById('textOutput');
+        const copyTextBtn = document.getElementById('copyTextBtn');
+
+
+        uppercaseBtn.addEventListener('click', ()=>{
+            const text = textInput.value;
+            textOutput.value = text.toUpperCase();
+
+            clearActive();
+            uppercaseBtn.classList.add('active');
+
+        });
+
+        lowercaseBtn.addEventListener('click', ()=>{
+            const text = textInput.value;
+            textOutput.value = text.toLowerCase();
+            clearActive();
+            lowercaseBtn.classList.add('active');
+        });
+
+        capitalizeBtn.addEventListener('click', ()=>{
+            const text = textInput.value;
+            textOutput.value = this.capitalizeWords(text);
+            clearActive();
+            capitalizeBtn.classList.add('active');
+        });
+
+        copyTextBtn.addEventListener('click', ()=>{
+            this.copyToClipboard(textOutput.value, copyTextBtn)
+        });
+
+    }
+
+     // Capitalizar primeira letra de cada palavra
+     capitalizeWords(text) {
+        return text.replace(/\w\S*/g, (txt) => {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+    }
+
+   
     setQuickDeadline(e) {
         const days = parseInt(e.target.dataset.days);
         const deadline = new Date();
