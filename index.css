@@ -782,12 +782,6 @@ button:hover {
     height: 300px;
 }
 
-.btn.primary {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
 .btn.secondary {
     background: linear-gradient(135deg, #64748b 0%, #475569 100%);
     color: white;
@@ -916,30 +910,33 @@ button:hover {
 }
 
 
-.grid-container-main {
-    display: grid;
-    gap:1rem;
-    grid-template-columns: repeat(4,1fr);
-    grid-template-areas: 
-    "one one two two"
-    "four four three three"
-}
-
 /* grid para botoes tool texto */
-.btn-transform:nth-child(1){
-    grid-area: one;
+.transform:nth-child(1){
+    grid-area: maiuscula;
 }
-.btn-transform:nth-child(2){
-    grid-area: two ;
+.transform:nth-child(2){
+    grid-area: minuscula ;
 }
-.btn-transform:nth-child(3){
-    grid-area: three ;
+.transform:nth-child(3){
+    grid-area: capital ;
 }
 
-.grid-container-tool1 {
-    display: grid;
-    gap: 1rem;
-    grid-column: repeat(3, 1fr);
-    grid-template-areas: 
-        "one" "two" "three"
+
+@media (min-width:10em) {
+    .grid-container-main {
+        display: grid;
+        gap:0.8rem;
+        grid-template-columns: repeat(4,1fr);
+        grid-template-areas: 
+        "one one two two"
+        "four four three three";
+    }
+    .gridcontainertool1 {
+        display: grid;
+        gap: 0.7rem;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: 
+            "maiuscula maiuscula"
+            "minuscula capital";
+    }
 }

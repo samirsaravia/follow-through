@@ -7,7 +7,16 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="container">
+    <div id="root" class="active ">
+        <div>
+            <label for="pass">Password (8 characters minimum):</label>
+            <input type="password" id="pass" name="password" minlength="8" required />
+        </div>  
+        <input type="submit" value="Entrar" />          
+    </div>
+
+
+    <div class="container" class="locked">
         <header>
             <h1> Gerenciador </h1>
             <div class="quote-futuristic">
@@ -50,7 +59,7 @@
                     </div>
                     <div class="form-group">
                         <label for="taskDescription">Descrição:</label>
-                        <textarea id="taskDescription" rows="3" required></textarea>
+                        <textarea id="taskDescription" class="transforming" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="taskDeadline">Prazo:</label>
@@ -173,16 +182,16 @@
                         <h4>Formatação</h4>
                         <div class="input-group form-group">
                             <label for="textInput">Texto Original</label>
-                            <textarea id="textInput" placeholder="Digite o texto..." rows="3" required></textarea>
+                            <textarea id="textInput" placeholder="Digite o texto..." rows="3" required class="transforming"></textarea>
                         </div>
-                        <div class="button-group grid-container-tool1">
-                            <button type="button" id="uppercaseBtn" class="btn-primary btn-transform">MAISCULA</button>
-                            <button type="button" id="lowercaseBtn" class="btn-secondary btn-transform">minuscula</button>
-                            <button type="button" id="capitalizeBtn" class="btn-secondary btn-transform">Capitalizada</button>
+                        <div class="button-group gridcontainertool1">
+                            <button type="button" id="uppercaseBtn" class="btn secondary transform ">MAIUSCULA</button>
+                            <button type="button" id="lowercaseBtn" class="btn secondary transform">minuscula</button>
+                            <button type="button" id="capitalizeBtn" class="btn secondary transform">Capitalizada</button>
                         </div>
                         <div class="input-group">
                             <label for="textOutput">Resultado</label>
-                            <textarea id="textOutput" readonly></textarea>
+                            <textarea id="textOutput" class="transforming"></textarea>
                             <button id="copyTextBtn" type="button" class="btn copy">Copiar</button>
                         </div>
 
@@ -196,76 +205,77 @@
                 
            
         </div>
+
+        <!-- Modal de Edição -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Editar Tarefa</h3>
+                <form id="editForm">
+                    <input type="hidden" id="editTaskId">
+                    <div class="form-group">
+                        <label for="editTitle">Título:</label>
+                        <input type="text" id="editTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDescription">Descrição:</label>
+                        <textarea id="editDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDeadline">Prazo:</label>
+                        <input type="datetime-local" id="editDeadline" required>
+                    </div>
+                    <!-- status -->
+                    <div class="form-group">
+                        <label for="editStatus">Status:</label>
+                        <select id="editStatus">
+                            <option value="andamento">Andamento</option>
+                            <option value="atrasada">Atrasada</option>
+                            <option value="encerrado">Encerrado</option>
+                        </select>
+                    </div>
+                    <!-- categoria -->
+                    <div class="form-group">
+                        <input type="hidden" id="editCategory" />
+
+                        <div class="form-group">
+                            <label for="editCategory">Categoria:</label>
+                            <div class="category-option" id="editCategoryButtons">
+                                <button type="button" class="category-btn">Visita</button>
+                                <button type="button" class="category-btn">Financeiro</button>
+                                <button type="button" class="category-btn">Outro</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="submit">Salvar</button>
+                        <button type="button" id="cancelEdit">Cancelar</button>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+        <!-- Modal de Concluir Tarefa -->
+        <div id="completeModal" class="modal">
+            <div class="modal-content">
+            <span class="close" id="closeCompleteModal">&times;</span>
+            <h3>Concluir Acompanhamento</h3>
+            <form id="completeForm">
+                <input type="hidden" id="completeTaskId">
+                <div class="form-group">
+                <label for="completionNotes">Como você realizou essa tarefa?</label>
+                <textarea id="completionNotes" rows="4" required placeholder="Descreva os passos, desafios ou observações..."></textarea>
+                </div>
+                <div class="modal-buttons">
+                <button type="submit">Concluir</button>
+                <button type="button" id="cancelComplete">Cancelar</button>
+                </div>
+            </form>
+            </div>
+        </div>
     </div>
    
 
-    <!-- Modal de Edição -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Editar Tarefa</h3>
-            <form id="editForm">
-                <input type="hidden" id="editTaskId">
-                <div class="form-group">
-                    <label for="editTitle">Título:</label>
-                    <input type="text" id="editTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="editDescription">Descrição:</label>
-                    <textarea id="editDescription" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="editDeadline">Prazo:</label>
-                    <input type="datetime-local" id="editDeadline" required>
-                </div>
-                <!-- status -->
-                <div class="form-group">
-                    <label for="editStatus">Status:</label>
-                    <select id="editStatus">
-                        <option value="andamento">Andamento</option>
-                        <option value="atrasada">Atrasada</option>
-                        <option value="encerrado">Encerrado</option>
-                    </select>
-                </div>
-                <!-- categoria -->
-                <div class="form-group">
-                    <input type="hidden" id="editCategory" />
-
-                    <div class="form-group">
-                        <label for="editCategory">Categoria:</label>
-                        <div class="category-option" id="editCategoryButtons">
-                            <button type="button" class="category-btn">Visita</button>
-                            <button type="button" class="category-btn">Financeiro</button>
-                            <button type="button" class="category-btn">Outro</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-buttons">
-                    <button type="submit">Salvar</button>
-                    <button type="button" id="cancelEdit">Cancelar</button>
-                </div>
-                
-            </form>
-        </div>
-    </div>
-    <!-- Modal de Concluir Tarefa -->
-    <div id="completeModal" class="modal">
-        <div class="modal-content">
-        <span class="close" id="closeCompleteModal">&times;</span>
-        <h3>Concluir Acompanhamento</h3>
-        <form id="completeForm">
-            <input type="hidden" id="completeTaskId">
-            <div class="form-group">
-            <label for="completionNotes">Como você realizou essa tarefa?</label>
-            <textarea id="completionNotes" rows="4" required placeholder="Descreva os passos, desafios ou observações..."></textarea>
-            </div>
-            <div class="modal-buttons">
-            <button type="submit">Concluir</button>
-            <button type="button" id="cancelComplete">Cancelar</button>
-            </div>
-        </form>
-        </div>
-    </div>
 
     <!-- copywrite -->
     <!-- <div class="copyright">
